@@ -9,7 +9,9 @@ Copy sampledata folder to project folder
     >>> import_questions.sync()
 """
 
-from classroom.models import Quiz, Question, Answer, Subject
+from quizzes.models import Quiz, Question, Answer
+
+from schools.models import Subject
 import os
 
 def sync_exam(subject, exam_date):
