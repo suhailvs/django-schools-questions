@@ -8,14 +8,29 @@ Copy sampledata folder to project folder
     >>> from sampledata import import_questions
     >>> import_questions.sync()
 """
+stackschools=False
+try:
+    from classroom.models import Quiz, Question, Answer, Subject
 
-from classroom.models import Quiz, Question, Answer, Subject
+except ImportError:
+    stackschools=True # this is for stackschools website
+    from quizzes.models import Quiz, Question, Answer
+    from schools.models import Subject
+    from django.contrib.auth import get_user_model
+
 import os
 
 def sync_exam(subject, exam_date):
+    if stackschools:
+        item = Subject.objects.filter(name = subject.replace('_',' ')).first()
+        if not item:
+            item, _ = Subject.objects.get_or_create(name = 'Misc')
 
-    item, _ = Subject.objects.get_or_create(name = subject.replace('_',' '))
-    quiz, created = Quiz.objects.get_or_create(owner_id = 2, name=exam_date, subject=item)
+        owner_id = get_user_model().objects.get(username="teacher").id
+    else:
+        item, _ = Subject.objects.get_or_create(name = subject.replace('_',' '))
+        owner_id = 2
+    quiz, created = Quiz.objects.get_or_create(owner_id = owner_id, name=exam_date, subject=item)
     if not created:
         return 'quiz already exist'
 
