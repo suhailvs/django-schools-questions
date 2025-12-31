@@ -36,6 +36,7 @@ def sync_exam(subject, exam_date):
 
     filename = os.path.join('sampledata', subject, '{0}.txt'.format(exam_date))
     fp = open(filename,'r')
+    print(f'Processing file: {filename}')
     for line in fp.readlines():
         items = line.split(',')
 
@@ -43,7 +44,7 @@ def sync_exam(subject, exam_date):
         for i,ans in enumerate(items[1:-1]):
             correct = int(items[-1]) == (i+1)
             answer = Answer.objects.create(question = question, text = ans.strip(), is_correct=correct)
-            print (answer)
+            
 
 def sync():
     # r=root, d=directories, f = files
